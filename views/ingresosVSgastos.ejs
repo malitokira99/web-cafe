@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ingresos y gastos</title>
+    <script src="code.js"></script>
+    <link rel="stylesheet" href="estilolote.css">
+</head>
+<body>
+    <header>
+            
+        <nav style="display: grid;">
+           <h2 id="titulo" style="margin: 0;">ingresos y gastos</h2>
+           <button  class="amburgesa" onclick="accion()"><h1>☕</h1></button>
+        <ul id="menu " style="margin-top: 0;">
+           <a href="/ " class="menu oculto" >inicio</a>
+           <a href="/lotes" class="menu oculto" >Lotes</a>
+           <a href="/actividades" class="menu oculto" >actividades</a>
+           <a href="/inventario" class="menu oculto" >inventario</a>
+        </ul>
+        </nav>
+   </header>
+    <div class="formulario">
+        <form action="/ingresosVSgastos" method="post">
+            <!-- Aquí van los campos del formulario -->
+             
+            <label for="tipo">Tipo</label>
+            <select name="tipo" class="desplegable" id="tipo">
+                <option value="" disabled selected>elige un tipo</option>
+                <option value="ingresos">ingreso</option>
+                <option value="gastos">gasto</option>
+             </select><br>
+             <label for="concepto">porque concepto</label>
+             <select name="concepto" class="desplegable" id="concepto">
+                <option value="" disabled selected>Selecciona un concepto</option>
+                <option value="venta de cafe">venta de cafe</option>
+                <option value="venta de platano"> venta de  platano</option>
+                <option value="otro concepto">otro concepto</option>
+             </select><br><br>
+            <label for="cunto">cantidad</label>
+            <input type="number" id="cantidad_producto" name="cantidad_producto"><br>
+            <label for="valor">monto en pesos COP</label>
+            <input type="number" id="cantidad_pesos" name="cantidad_pesos"><br>
+             
+            <label for="fecaha">fecha</label>
+            <input type="date" id="fecha_registro" name="fecha_registro"><br>
+             <label>periodo</label>
+            <div style="display: flex; width: 100%;">
+                <select name="semana" id="semana" class="desplegable" style="width: 50%; margin: 3px;">
+                    <option value="" disabled selected>Semana</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                 </select>
+                 <!--mes-->
+                 <select name="mes" id="mes" class="desplegable" style="width: 50%; margin: 3px;">
+                    <option value="" disabled selected>mes</option>
+                    <option value="enero">enero</option>
+                    <option value="febrero">febrero</option>
+                    <option value="marzo">marzo</option>
+                    <option value="abril">abril</option>
+                    <option value="mayo">mayo</option>
+                    <option value="junio">junio</option>
+                    <option value="julio">julio</option>
+                    <option value="agosto">agosto</option>
+                    <option value="septiembre">septiembre</option>
+                    <option value="octubre">octubre</option>
+                    <option value="noviembre">noviembre</option>
+                    <option value="diciembre">diciembre</option>                     
+                 </select>
+            </div> <br> <br>
+            <label for="observa">Observaciones</label>
+            <textarea name="observaciones" id="observaciones"></textarea><br>
+            <input type="submit" value="Guardar" id="btlote">
+            <br>
+        </form>
+            <a id="bdetalles"> revisar o eliminar registro</a>
+    </div>
+    <div class="detalles_crud" id="detalles_inicio">
+        <span class="cerrar" id="cerrarBtn">&times;</span>
+        <!-- Los registros se agregarán aquí dinámicamente -->
+    </div>
+</div>
+
+    <script>
+        // para mostrar de talles y elimnar registros por fecha
+        document.getElementById("bdetalles").addEventListener('click', function() {
+            document.getElementById('detalles_inicio').style.display = 'block';
+        });
+    
+        document.getElementById('cerrarBtn').addEventListener('click', function() {
+            document.getElementById('detalles_inicio').style.display = 'none';
+        });
+    
+        async function obtenerFechas() {
+            try {
+                const response = await fetch('http://localhost:4000/fechasIngresos');
+                if (!response.ok) {
+                    throw new Error('Error en la solicitud');
+                }
+                const data = await response.json();
+                const detallesInicioDiv = document.getElementById('detalles_inicio');
+                
+                detallesInicioDiv.innerHTML = ' <span class="cerrar" id="cerrarBtn">&times;</span>';
+                data.forEach(fecha => {
+                    const fechaElement = document.createElement('div');
+                    fechaElement.className = 'articulo';
+                    const fechaCorta = new Date(fecha.fecha_registro).toLocaleDateString('es-ES');
+                    fechaElement.innerHTML = `
+                        <span class="span_f">${fechaCorta}</span>
+                        <div class="icons">
+                            <i class="refresh-icon">🔄</i>
+                            <i class="delete-icon" data-id="${fecha.id}">🗑️</i>
+                        </div>
+                        <br>
+                    `;
+                    detallesInicioDiv.appendChild(fechaElement);
+                });
+    
+                // Añadir eventos de clic a los íconos de eliminación
+                document.querySelectorAll('.delete-icon').forEach(icon => {
+                    icon.addEventListener('click', function() {
+                        const id = this.getAttribute('data-id');
+                        eliminarFecha(id);
+                    });
+                });
+
+                // Reasignar el evento al botón cerrar después de actualizar el contenido
+            document.getElementById('cerrarBtn').addEventListener('click', function() {
+            document.getElementById('detalles_inicio').style.display = 'none';
+        });
+            } catch (error) {
+                document.getElementById('detalles_inicio').innerText = 'Error al cargar las fechas';
+                console.error('Error:', error);
+            }
+        }
+    
+        async function eliminarFecha(id) {
+            if (!id) {
+                alert('ID no válido');
+                return;
+            }
+            try {
+                const response = await fetch(`http://localhost:4000/fechasIngresos/${id}`, {
+                    method: 'DELETE'
+                });
+                const result = await response.text();
+                alert(result);
+                obtenerFechas(); // Recargar las fechas después de eliminar
+            } catch (error) {
+                alert('Error al eliminar la fecha');
+                console.error('Error:', error);
+            }
+        }
+    
+        obtenerFechas();
+        
+    </script>
+</body>
+</html>

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=0.99">
+    <title>gestion cafetera</title>
+    <link rel="stylesheet" href="estilos.css">
+    <script src="code.js"></script>
+    <script src="inicio.js" defer></script>
+    <style>
+       
+    </style>
+</head>
+<body>
+    <header>
+        <nav style="display: grid;">
+            <h2 id="titulo" style="margin: 0;"></h2>
+            <button class="amburgesa" onclick="accion()"><h1 style="margin: 0; padding: 0; width: 100%; cursor: pointer;">☕</h1></button>
+            <ul id="menu" style="margin-top: 0;">
+                <a href="/lotes" class="menu oculto">Lotes</a>
+                <a href="/actividades" class="menu oculto">actividades</a>
+                <a href="/inventario" class="menu oculto">inventario</a>
+                <a href="/ingresosVSgastos" class="menu oculto">ingresos y gastos</a>
+            </ul>
+        </nav>
+    </header>
+    <section id="info_finca" >
+        <div style=" width:60%;">
+        <h1 style="color: antiquewhite;">Finca La Isla</h1>
+        <h3>area: 20,000m2</h3>
+        <h3>altura msnm: 1,430</h3>
+        <h3>departamento: Tolima</h3>
+        <h3>municipio: Líbano</h3>
+        <button id="bdetalles" style="width: max-content; padding: 5px;">Detalles</button>
+    </div>
+            <div id="weather">
+                <h1>Clima Actual en el Líbano Tólima</h1>
+            </div>
+        
+    </section>
+    <section id="finta">
+        <div id="accesof">
+            <h4>estado financiero</h4>
+            <form action="#" id="mes-form">
+                <label for="meses" id="cmes">Mes</label>
+                <select name="meses" id="meses">
+                    <option value="enero">Enero</option>
+                    <option value="febrero">Febrero</option>
+                    <option value="marzo">Marzo</option>
+                    <option value="abril">Abril</option>
+                    <option value="mayo">Mayo</option>
+                    <option value="junio">Junio</option>
+                    <option value="julio">Julio</option>
+                    <option value="agosto">Agosto</option>
+                    <option value="septiembre">Septiembre</option>
+                    <option value="octubre">Octubre</option>
+                    <option value="noviembre">Noviembre</option>
+                    <option value="diciembre">Diciembre</option>
+                </select>
+            </form>
+        </div>
+        <div id="festado">
+            <div id="fnegativo">
+                <h5>gastos</h5>
+                <h6 id="gastos"> - COP 0 </h6>
+            </div>
+            <div id="fpositivo">
+                <h5>ingresos</h5>
+                <h6 id="ingresos"> + COP 0 </h6>
+            </div>
+        </div>
+        <div class="grafico_barras">
+            <div class="columnas">
+                <div class="area_grafico">
+                    <div class="area_barras" id="area_barras">
+                        <!-- Las barras se generarán dinámicamente aquí -->
+                    </div>
+                    <div class="escalax">
+                        <div class="division" id="semana1">Semana 1</div>
+                        <div class="division" id="semana2">Semana 2</div>
+                        <div class="division" id="semana3">Semana 3</div>
+                        <div class="division" id="semana4">Semana 4</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <script>
+            function actualizarGrafico(mes) {
+                fetch('http://localhost:4000/datos/' + mes)
+                    .then(response => response.json())
+                    .then(data => {
+                        var ingresos = 0;
+                        var gastos = 0;
+                        var areaBarras = document.getElementById('area_barras');
+                        areaBarras.innerHTML = '';
+    
+                        var maxIngreso = Math.max(...data.map(item => item.ingresos));
+                        var maxGasto = Math.max(...data.map(item => item.gastos));
+                        var maxValor = Math.max(maxIngreso, maxGasto);
+    
+                        data.forEach(function(item) {
+                            ingresos += parseFloat(item.ingresos);
+                            gastos += parseFloat(item.gastos);
+    
+                            var barraCaramelo = document.createElement('div');
+                            barraCaramelo.className = 'barra_caramelo barra';
+                            barraCaramelo.style.height = (item.ingresos / maxValor * 90) + '%';
+                            barraCaramelo.setAttribute('data-value', parseFloat(item.ingresos).toLocaleString() + ' △ COP');
+    
+                            var barraCafe = document.createElement('div');
+                            barraCafe.className = 'barra_cafe barra';
+                            barraCafe.style.height = (item.gastos / maxValor * 90) + '%';
+                            barraCafe.setAttribute('data-value', parseFloat(item.gastos).toLocaleString() + ' 🔻 COP');
+    
+                            var division = document.createElement('div');
+                            division.className = 'division';
+                            division.appendChild(barraCaramelo);
+                            division.appendChild(barraCafe);
+    
+                            areaBarras.appendChild(division);
+                        });
+    
+                        document.getElementById('ingresos').innerText = '+ COP ' + ingresos.toLocaleString();
+                        document.getElementById('gastos').innerText = '- COP ' + gastos.toLocaleString();
+                    });
+            }
+    
+            document.getElementById('meses').addEventListener('change', function() {
+                var mes = this.value;
+                actualizarGrafico(mes);
+            });
+    
+            // Mostrar datos del mes actual al cargar la interfaz
+            document.addEventListener('DOMContentLoaded', function() {
+                var mesActual = new Date().toLocaleString('es-ES', { month: 'long' }).toLowerCase();
+                document.getElementById('meses').value = mesActual;
+                actualizarGrafico(mesActual);
+            });
+        </script>
+        </section>
+    </section>
+    <div id="detalles_inicio">
+        <span class="cerrar" id="cerrarBtn">&times;</span>
+       <div class="datos_finca_inicio">
+           <h1>nombre de la finca</h1>
+           <h1>area metros cuadrados</h1>
+           <h1>departamento</h1>
+           <h1>altura msnm</h1>
+           <h1>municipio</h1>
+         <h1>aqui estara datos especificos</h1>
+       </div>
+    </div>
+    <script>
+        document.getElementById("bdetalles").addEventListener('click', function() {
+            document.getElementById('detalles_inicio').style.display = 'block';
+        });
+
+        document.getElementById('cerrarBtn').addEventListener('click', function() {
+            document.getElementById('detalles_inicio').style.display = 'none';
+        });
+    </script>
+</body>
+</html>

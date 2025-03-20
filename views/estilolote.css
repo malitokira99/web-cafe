@@ -1,0 +1,298 @@
+   body {
+    margin: 0;
+    padding: 1px;
+    background-color: #171111;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    
+        }
+        header{
+            display: grid;
+        }
+        #menu li{
+        
+            display: inline;
+            list-style: none;
+           
+        }
+        a{
+            color:#f2f2f2;
+            text-decoration: none;
+            margin: 1%;
+        }
+       
+        #titulo{
+            width: 100%;
+            height: 50%;
+            margin: 0;
+            text-align: center;
+            color: #f2f2f2;
+        }
+        .formulario {
+            padding: 5px;
+            margin: 2px;
+            display:grid;
+            margin: auto;
+            height: 90vh;
+            
+        }
+        form {
+            display: grid;
+            margin: auto;
+            width: 90%;
+            height: 99%;
+            background-color: #f2f2f207;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        input {
+            border-radius: 10px;
+            color: #f2f2f2;
+            background-color: rgba(204, 88, 88, 0.199);
+            border: none;
+        }
+
+        .desplegable{
+            border-radius: 10px;
+            color: #f2f2f2;
+            background-color: rgba(204, 88, 88, 0.199);
+            border: none;
+        }
+
+        textarea{
+            border-radius: 10px;
+            color: #f2f2f2;
+            background-color: rgba(204, 88, 88, 0.199);
+            border: none;
+        }
+        label{
+            color: #f2f2f2;
+        }
+        
+        #btlote{
+            background-color: #6a0c02;
+
+        }
+
+    #tcultivo{
+        border-radius: 10px;
+            color: #f2f2f2;
+            background-color: rgba(204, 88, 88, 0.11);
+            border: none;
+    }
+
+    option{
+        background-color: #6a0c02;
+    }
+
+    /*amburgesa*/
+    nav{
+     
+        width: 100%;
+        background-color:#251d1d;
+        margin-top: 0px;
+        padding: 0px;
+        display: flex;
+        justify-content: baseline;
+    
+    }
+    
+    #main-header{
+        margin: 0;
+        border: 0;
+        padding: 0;
+        width: 100%;
+    
+    }
+    .amburgesa{
+      background-color: rgba(240, 248, 255, 0);
+      border: 0;
+      width: 50px;
+      height: 50px;
+      display:none;
+    
+    }
+    .menu{
+        
+        justify-content: center;
+        display:inline-block;
+        background-color: rgba(146, 158, 158, 0);
+        color: aliceblue;
+        padding: 10px 30px;
+        margin: 10px 10px;
+        text-decoration: none;
+    
+    }
+    
+    @media (max-width: 600px){
+        nav{
+            background-color: #251d1d;
+            flex-direction: column;
+        }
+        .amburgesa{
+            display: inline-block;
+            justify-content: center;
+        }
+        .oculto{
+            display: none;
+        }
+        .caja-carusel{
+            width: 100%;
+            margin: 3px;
+        }
+        body{
+            padding: 0.5%;
+        }
+       
+    }
+    /*cuadro de dialogo  informacion finca*/
+#detalles_inicio {
+    display: none;
+    position: fixed;
+    top: 10%;
+    left: 5%;
+    width: 90%;
+    height: 90%;
+    background-color: #525050;
+    color: white;
+    z-index: 1000;
+    padding: 20px;
+    box-sizing: border-box;
+    
+}
+.cerrar {
+    cursor: pointer;
+    float: right;
+    font-size: 30px;
+} 
+
+#bdetalles{
+    width: 100%;
+    height: 10%;
+    text-align: center;
+    border-radius: 8px;
+    color: #6a0254;
+    cursor: pointer;
+}
+
+/* aqui detalle crud*/
+
+.detalles_crud{
+    width: 90%;
+    height: 90%;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #44444450;
+    border-radius: 10px;
+    display: block;
+    overflow:auto;
+    scrollbar-color: #6a025415 #44444400;
+}
+
+
+
+.articulo{
+    display: flex;
+    width: 97%;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #800000;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+.item span {
+    
+    justify-content: space-between;
+    font-size: 16px;
+}
+
+.span_f{
+    width: 90%;
+}
+.icons {
+    display: flex;
+    gap: 10px;
+}
+
+.icons i {
+    cursor: pointer;
+}
+
+.close-btn {
+    display: block;
+    text-align: right;
+    cursor: pointer;
+}
+#cerrarBtn{
+
+
+    float: right;
+    
+    cursor: pointer;
+    
+}
+
+@media (max-width: 768px) {
+    table, thead, tbody, th, td, tr {
+        display: block;
+    }
+    thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+    tr {
+        margin: 0 0 1rem 0;
+    }
+    tr:nth-child(odd) {
+        background: #8368687e;
+    }
+    td {
+        border: none;
+        
+        position: relative;
+        padding-left: 50%;
+    }
+    td:before {
+        position: absolute;
+        top: 6px;
+        left: 6px;
+        width: 45%;
+        padding-right: 10px;
+        white-space: nowrap;
+        content: attr(data-label);
+        font-weight: bold;
+    }
+}
+button{
+    background-color: #6a0c02;
+    color: #f2f2f2;
+    border: none;
+    border-radius: 8px;
+    padding: 5px;
+    cursor: pointer;
+}
+.detalles_crud {
+    display: none; /* Inicialmente oculto */
+    position: fixed; /* Posición fija para superponerse */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgb(95, 91, 91); /* Fondo semitransparente */
+    z-index: 1000; /* Asegura que esté por encima de todos los demás elementos */
+    overflow: auto; /* Permitir scroll si el contenido es demasiado largo */
+    padding: 20px; /* Espaciado interno */
+    box-sizing: border-box; /* Incluir el padding en el tamaño total */
+}
+.detalles_crud .cerrar {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 30px;
+    cursor: pointer;
+    color: white; /* Color del icono de cerrar */
+}
