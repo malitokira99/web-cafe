@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>actividades</title>
+    <script src="code.js"></script>
+    <link rel="stylesheet" href="estilolote.css">
+</head>
+<body>
+    <header>
+            
+        <nav style="display: grid;">
+           <h2 id="titulo" style="margin: 0;">actividades</h2>
+           <button  class="amburgesa" onclick="accion()"><h1>☕</h1></button>
+        <ul id="menu " style="margin-top: 0;">
+           <a href="/" class="menu oculto" >inicio</a>
+           <a href="/lotes" class="menu oculto" >Lotes</a>
+           <a href="/inventario" class="menu oculto" >inventario</a>
+           <a href="/ingresosVSgastos" class="menu oculto" >ingresos y gastos</a>
+        </ul>
+        </nav>
+   </header>
+    <div class="formulario">
+        <form action="/actividades" method="post">
+            <!-- Aquí van los campos del formulario -->
+             
+            <label for="nombre">Actividad</label>
+            <input type="text" id="nombre_actividad" name="nombre_actividad" placeholder="nombre de la actividad"><br>
+            <label for="area">responsable</label>
+            <input type="text" id="nombre_realizador" name="nombre_realizador" placeholder="nombre de quien hizo el trabajo"><br>
+            <label for="jornales">jornales</label>
+            <input type="number" id="jornales" name="jornales" placeholder="ingrese el numero de jornales "><br>
+            <label for="nombre">insumo utilizado</label>
+            <select name="insumo_utilizado" id="insumo_utilizado tipo_cultivo" class="desplegable">
+                <option value="" disabled selected>Selecciona un tipo de insumo</option>
+                <option value="herramienta">herramienta</option>
+                <option value="maquina">maquina</option>
+                <option value="insumo">insumo</option>
+                <option value="equipo">equipo</option>
+             </select><br><br>
+            <label for="fecaha_realizacion">fecha</label>
+            <input type="date" id="fecha_realizacion" name="fecha_realizacion"><br>
+            <label for="costo">costo total</label>
+            <input type="number" id="costo_total" name="costo_total"><br>
+            <label for="observa">Observaciones</label>
+            <textarea name="observaciones" id="observaciones"></textarea><br>
+            <input type="submit" value="Guardar" id="btlote">
+            <br>
+            <a id="bdetalles"> revisar o eliminar registro</a>
+        
+        </form>
+        <br>
+        
+    </div>
+    <div class="detalles_crud" id="detalles_inicio">
+        <span class="cerrar" id="cerrarBtn">&times;</span>
+        <!-- Los registros se agregarán aquí dinámicamente -->
+    </div>
+</div>
+
+    <script>
+        // para mostrar de talles y elimnar registros por fecha
+        document.getElementById("bdetalles").addEventListener('click', function() {
+            document.getElementById('detalles_inicio').style.display = 'block';
+        });
+    
+        document.getElementById('cerrarBtn').addEventListener('click', function() {
+            document.getElementById('detalles_inicio').style.display = 'none';
+        });
+    
+        async function obtenerFechas() {
+            try {
+                const response = await fetch('http://localhost:4000/fechasActividades');
+                if (!response.ok) {
+                    throw new Error('Error en la solicitud');
+                }
+                const data = await response.json();
+                const detallesInicioDiv = document.getElementById('detalles_inicio');
+                
+                detallesInicioDiv.innerHTML = ' <span class="cerrar" id="cerrarBtn">&times;</span>';
+                data.forEach(fecha => {
+                    const fechaElement = document.createElement('div');
+                    fechaElement.className = 'articulo';
+                    const fechaCorta = new Date(fecha.fecha_realizacion).toLocaleDateString('es-ES');
+                    fechaElement.innerHTML = `
+                        <span class="span_f">${fechaCorta}</span>
+                        <div class="icons">
+                            <i class="refresh-icon">🔄</i>
+                            <i class="delete-icon" data-id="${fecha.id}">🗑️</i>
+                        </div>
+                        <br>
+                    `;
+                    detallesInicioDiv.appendChild(fechaElement);
+                });
+    
+                // Añadir eventos de clic a los íconos de eliminación
+                document.querySelectorAll('.delete-icon').forEach(icon => {
+                    icon.addEventListener('click', function() {
+                        const id = this.getAttribute('data-id');
+                        eliminarFecha(id);
+                    });
+                });
+
+                // Reasignar el evento al botón cerrar después de actualizar el contenido
+            document.getElementById('cerrarBtn').addEventListener('click', function() {
+            document.getElementById('detalles_inicio').style.display = 'none';
+        });
+            } catch (error) {
+                document.getElementById('detalles_inicio').innerText = 'Error al cargar las fechas';
+                console.error('Error:', error);
+            }
+        }
+    
+        async function eliminarFecha(id) {
+            if (!id) {
+                alert('ID no válido');
+                return;
+            }
+            try {
+                const response = await fetch(`http://localhost:4000/fechasActividades/${id}`, {
+                    method: 'DELETE'
+                });
+                const result = await response.text();
+                alert(result);
+                obtenerFechas(); // Recargar las fechas después de eliminar
+            } catch (error) {
+                alert('Error al eliminar la fecha');
+                console.error('Error:', error);
+            }
+        }
+    
+        obtenerFechas();
+        
+    </script>
+    
+</body>
+</html>
