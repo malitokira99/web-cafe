@@ -37,7 +37,7 @@ El proyecto está organizado de la siguiente manera:
 
 ## Tecnologías Utilizadas
 
-- **Frontend:** React Native  
+- **Frontend:** HTML,CSS,JS  
 - **Backend:** API Node.js  
 - **Base de Datos:** MySQL  
 
@@ -54,7 +54,7 @@ El proyecto está organizado de la siguiente manera:
 3. Configura la base de datos y las variables de entorno.  
 4. Inicia el servidor:  
    ```bash
-   npm start
+   npm run dev
    ```
 
 ## Contribuciones
