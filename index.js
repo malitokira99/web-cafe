@@ -39,6 +39,17 @@ app.get('/', function (req, res) {
         res.json(results);
     });
 });
+
+app.get("/datos", (req, res) => {
+    const query = "SELECT * FROM datos_financieros";
+    conexion.query(query, (err, results) => {
+        if (err) {
+            console.error("Error al ejecutar la consulta:", err.message);
+            return res.status(500).json({ error: "Error al obtener los datos" });
+        }
+        res.status(200).json(results);
+    });
+});
     app.get('/datos/:mes', (req, res) => {
         res.header("Access-Control-Allow-Origin", "*");
     const mes = req.params.mes;

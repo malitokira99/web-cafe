@@ -60,13 +60,13 @@
             </form>
         </div>
         <div id="festado">
-            <div id="fnegativo">
-                <h5>gastos</h5>
-                <h6 id="gastos"> - COP 0 </h6>
-            </div>
             <div id="fpositivo">
                 <h5>ingresos</h5>
                 <h6 id="ingresos"> + COP 0 </h6>
+            </div>
+            <div id="fnegativo">
+                <h5>gastos</h5>
+                <h6 id="gastos"> - COP 0 </h6>
             </div>
         </div>
         <div class="grafico_barras">
@@ -87,53 +87,61 @@
     
         <script>
             function actualizarGrafico(mes) {
-                fetch('http://localhost:4000/datos/' + mes)
+                fetch('http://localhost:4000/datos')
                     .then(response => response.json())
                     .then(data => {
-                        var ingresos = 0;
-                        var gastos = 0;
-                        var areaBarras = document.getElementById('area_barras');
-                        areaBarras.innerHTML = '';
-    
-                        var maxIngreso = Math.max(...data.map(item => item.ingresos));
-                        var maxGasto = Math.max(...data.map(item => item.gastos));
-                        var maxValor = Math.max(maxIngreso, maxGasto);
-    
-                        data.forEach(function(item) {
-                            ingresos += parseFloat(item.ingresos);
-                            gastos += parseFloat(item.gastos);
-    
-                            var barraCaramelo = document.createElement('div');
+                        let ingresos = 0;
+                        let gastos = 0;
+                        const areaBarras = document.getElementById('area_barras');
+                        areaBarras.innerHTML = ''; // Limpiar gráfico anterior
+
+                        // Filtrar datos para el mes seleccionado
+                        const datosFiltrados = data.filter(item => item.mes.toLowerCase() === mes);
+
+                        // Asegurar que se procesen todas las semanas (1 a 4)
+                        const semanas = [1, 2, 3, 4];
+                        const maxIngreso = Math.max(...datosFiltrados.map(item => item.ingresos), 0);
+                        const maxGasto = Math.max(...datosFiltrados.map(item => item.gastos), 0);
+                        const maxValor = Math.max(maxIngreso, maxGasto);
+
+                        semanas.forEach(semana => {
+                            const datosSemana = datosFiltrados.find(item => item.semana === semana) || { ingresos: 0, gastos: 0 };
+
+                            ingresos += parseFloat(datosSemana.ingresos || 0);
+                            gastos += parseFloat(datosSemana.gastos || 0);
+
+                            const barraCaramelo = document.createElement('div');
                             barraCaramelo.className = 'barra_caramelo barra';
-                            barraCaramelo.style.height = (item.ingresos / maxValor * 90) + '%';
-                            barraCaramelo.setAttribute('data-value', parseFloat(item.ingresos).toLocaleString() + ' △ COP');
-    
-                            var barraCafe = document.createElement('div');
+                            barraCaramelo.style.height = (datosSemana.ingresos / maxValor * 90) + '%';
+                            barraCaramelo.setAttribute('data-value', `+ COP ${parseFloat(datosSemana.ingresos || 0).toLocaleString()}`);
+
+                            const barraCafe = document.createElement('div');
                             barraCafe.className = 'barra_cafe barra';
-                            barraCafe.style.height = (item.gastos / maxValor * 90) + '%';
-                            barraCafe.setAttribute('data-value', parseFloat(item.gastos).toLocaleString() + ' 🔻 COP');
-    
-                            var division = document.createElement('div');
+                            barraCafe.style.height = (datosSemana.gastos / maxValor * 90) + '%';
+                            barraCafe.setAttribute('data-value', `- COP ${parseFloat(datosSemana.gastos || 0).toLocaleString()}`);
+
+                            const division = document.createElement('div');
                             division.className = 'division';
                             division.appendChild(barraCaramelo);
                             division.appendChild(barraCafe);
-    
+
                             areaBarras.appendChild(division);
                         });
-    
-                        document.getElementById('ingresos').innerText = '+ COP ' + ingresos.toLocaleString();
-                        document.getElementById('gastos').innerText = '- COP ' + gastos.toLocaleString();
-                    });
+
+                        document.getElementById('ingresos').innerText = `+ COP ${ingresos.toLocaleString()}`;
+                        document.getElementById('gastos').innerText = `- COP ${gastos.toLocaleString()}`;
+                    })
+                    .catch(error => console.error('Error al cargar datos:', error));
             }
-    
+
             document.getElementById('meses').addEventListener('change', function() {
-                var mes = this.value;
+                const mes = this.value;
                 actualizarGrafico(mes);
             });
-    
+
             // Mostrar datos del mes actual al cargar la interfaz
             document.addEventListener('DOMContentLoaded', function() {
-                var mesActual = new Date().toLocaleString('es-ES', { month: 'long' }).toLowerCase();
+                const mesActual = new Date().toLocaleString('es-ES', { month: 'long' }).toLowerCase();
                 document.getElementById('meses').value = mesActual;
                 actualizarGrafico(mesActual);
             });
