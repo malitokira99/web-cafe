@@ -37,7 +37,7 @@ El proyecto está organizado de la siguiente manera:
 
 ## Tecnologías Utilizadas
 
-- **Frontend:** HTML,CSS,JS  
+- **Frontend:** EJS,CSS,JS  
 - **Backend:** API Node.js  
 - **Base de Datos:** MySQL  
 
