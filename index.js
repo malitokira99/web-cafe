@@ -357,7 +357,49 @@ app.delete('/fechasActividades/:id', (req, res) => {
         }
         res.send('Registro eliminado correctamente');
     }); 
-});// fin api para fechas actividades
+});
+
+// API para actualizar una actividad
+app.put('/actualizar-actividad/:id', (req, res) => {
+    res.header("Access-Control-Allow-Origin", "*");
+    const id = req.params.id;
+    const { nombre_actividad, nombre_realizador, jornales, insumo_utilizado, fecha_realizacion, costo_total, observaciones } = req.body;
+
+    let campos = [];
+    if (nombre_actividad) campos.push(`nombre_actividad = '${nombre_actividad}'`);
+    if (nombre_realizador) campos.push(`nombre_realizador = '${nombre_realizador}'`);
+    if (jornales) campos.push(`jornales = ${jornales}`);
+    if (insumo_utilizado) campos.push(`insumo_utilizado = '${insumo_utilizado}'`);
+    if (fecha_realizacion) campos.push(`fecha_realizacion = '${fecha_realizacion}'`);
+    if (costo_total) campos.push(`costo_total = ${costo_total}`);
+    if (observaciones) campos.push(`observaciones = '${observaciones}'`);
+
+    if (campos.length === 0) {
+        return res.status(400).send('No se proporcionaron campos para actualizar');
+    }
+
+    const sql = `UPDATE actividades SET ${campos.join(', ')} WHERE id = ${id}`;
+    conexion.query(sql, (err, result) => {
+        if (err) {
+            console.error('Error al actualizar la actividad:', err);
+            return res.status(500).send('Error al actualizar la actividad');
+        }
+        res.send('Actividad actualizada exitosamente');
+    });
+});
+
+// fin api para fechas actividades
+
+app.get('/actividadesa', (req, res) => {
+    res.header("Access-Control-Allow-Origin", "*");
+    const sql = 'SELECT * FROM actividades';
+    conexion.query(sql, (err, result) => {
+      if (err) {
+        return res.status(500).send('Error al obtener los lotes');
+      }
+      res.json(result);
+    });
+  });
 
 
 app.listen(4000, function() {

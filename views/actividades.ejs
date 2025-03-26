@@ -57,6 +57,25 @@
         <span class="cerrar" id="cerrarBtn">&times;</span>
         <!-- Los registros se agregarán aquí dinámicamente -->
     </div>
+<div class="detalles_crud" id="nueva_ventana" style="display: none;">
+    <span class="cerrar" id="cerrarNuevaVentana">&times;</span>
+    <h3 style="color: #f2f2f2;">Actualizar Actividades</h3>
+    <table id="actividades-table" style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+        <thead>
+            <tr style="background-color: #f2f2f2;">
+                <th>ID</th>
+                <th>Actividad</th>
+                <th>Responsable</th>
+                <th>Jornales</th>
+                <th>Insumo Utilizado</th>
+                <th>Fecha</th>
+                <th>Costo Total</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
 </div>
 
     <script>
@@ -102,6 +121,15 @@
                     });
                 });
 
+                // Añadir eventos de clic a los íconos de refresco
+                document.querySelectorAll('.refresh-icon').forEach(icon => {
+                    icon.addEventListener('click', function() {
+                        document.getElementById('nueva_ventana').style.display = 'block';
+                        document.getElementById('detalles_inicio').style.display = 'none';
+                        obtenerActividades(); // Llamar a la función para cargar actividades
+                    });
+                });
+
                 // Reasignar el evento al botón cerrar después de actualizar el contenido
             document.getElementById('cerrarBtn').addEventListener('click', function() {
             document.getElementById('detalles_inicio').style.display = 'none';
@@ -133,6 +161,75 @@
         obtenerFechas();
         
     </script>
+<script>
+    // Evento para abrir la ventana de actividades al pulsar el ícono refresh-icon
+    document.querySelectorAll('.refresh-icon').forEach(icon => {
+        icon.addEventListener('click', function() {
+            document.getElementById('nueva_ventana').style.display = 'block';
+            document.getElementById('detalles_inicio').style.display = 'none'; // Ocultar detalles
+            obtenerActividades(); // Llamar a la función para cargar actividades
+        });
+    });
+
+    // Evento para cerrar la ventana de actividades
+    document.getElementById('cerrarNuevaVentana').addEventListener('click', function() {
+        document.getElementById('nueva_ventana').style.display = 'none';
+    });
+
+    // Función para obtener y mostrar las actividades
+    async function obtenerActividades() {
+        try {
+            const response = await fetch('http://localhost:4000/actividadesa');
+            if (!response.ok) {
+                throw new Error('Error en la solicitud');
+            }
+            const data = await response.json();
+            console.log('Datos recibidos:', data); // Depuración
+            const tableBody = document.getElementById('actividades-table').getElementsByTagName('tbody')[0];
+            tableBody.innerHTML = ''; // Limpiar contenido previo
+            data.forEach(actividad => {
+                const fechaRealizacion = new Date(actividad.fecha_realizacion);
+                const fechaFormateada = fechaRealizacion.toISOString().split('T')[0]; // Formato yyyy-MM-dd
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${actividad.id}</td>
+                    <td><input type="text" value="${actividad.nombre_actividad}" data-id="${actividad.id}" data-campo="nombre_actividad"></td>
+                    <td><input type="text" value="${actividad.nombre_realizador}" data-id="${actividad.id}" data-campo="nombre_realizador"></td>
+                    <td><input type="number" value="${actividad.jornales}" data-id="${actividad.id}" data-campo="jornales"></td>
+                    <td><input type="text" value="${actividad.insumo_utilizado}" data-id="${actividad.id}" data-campo="insumo_utilizado"></td>
+                    <td><input type="date" value="${fechaFormateada}" data-id="${actividad.id}" data-campo="fecha_realizacion"></td>
+                    <td><input type="number" value="${actividad.costo_total}" data-id="${actividad.id}" data-campo="costo_total"></td>
+                    <td><button onclick="actualizarActividad(${actividad.id})">Actualizar</button></td>
+                `;
+                tableBody.appendChild(row);
+            });
+        } catch (error) {
+            console.error('Error al obtener las actividades:', error);
+        }
+    }
+
+    // Función para actualizar una actividad
+    function actualizarActividad(id) {
+        const inputs = document.querySelectorAll(`input[data-id="${id}"]`);
+        const datosActualizados = {};
+        inputs.forEach(input => {
+            datosActualizados[input.getAttribute('data-campo')] = input.value;
+        });
+        fetch(`http://localhost:4000/actualizar-actividad/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(datosActualizados)
+        })
+            .then(response => response.text())
+            .then(data => {
+                alert(data);
+                obtenerActividades(); // Recargar actividades después de actualizar
+            })
+            .catch(error => console.error('Error al actualizar la actividad:', error));
+    }
+</script>
     
 </body>
 </html>
