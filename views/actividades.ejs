@@ -32,12 +32,9 @@
             <label for="jornales">jornales</label>
             <input type="number" id="jornales" name="jornales" placeholder="ingrese el numero de jornales "><br>
             <label for="nombre">insumo utilizado</label>
-            <select name="insumo_utilizado" id="insumo_utilizado tipo_cultivo" class="desplegable">
+            <select name="insumo" id="insumo_utilizado tipo_cultivo" class="desplegable">
                 <option value="" disabled selected>Selecciona un tipo de insumo</option>
-                <option value="herramienta">herramienta</option>
-                <option value="maquina">maquina</option>
-                <option value="insumo">insumo</option>
-                <option value="equipo">equipo</option>
+                <option value="">cargando insumos</option>                
              </select><br><br>
             <label for="fecaha_realizacion">fecha</label>
             <input type="date" id="fecha_realizacion" name="fecha_realizacion"><br>
@@ -229,6 +226,28 @@
             })
             .catch(error => console.error('Error al actualizar la actividad:', error));
     }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        const insumoSelect = document.getElementById('insumo_utilizado tipo_cultivo');
+
+        try {
+            // Fetch insumos desde el backend
+            const response = await fetch('http://localhost:4000/insumos');
+            const insumos = await response.json();
+
+            // Vacía el desplegable y llena con datos obtenidos
+            insumoSelect.innerHTML = '<option value="">Selecciona un insumo</option>';
+            insumos.forEach(insumo => {
+                const option = document.createElement('option');
+                option.value = insumo.id; // ID del insumo
+                option.textContent = insumo.nombre; // Nombre del insumo
+                insumoSelect.appendChild(option);
+            });
+        } catch (error) {
+            console.error('Error cargando insumos:', error);
+            insumoSelect.innerHTML = '<option value="">Error cargando insumos</option>';
+        }
+    });
 </script>
     
 </body>
