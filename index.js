@@ -247,6 +247,23 @@ app.put('/actualizar-inventario/:id', (req, res) => {
     });
 });
 
+
+// api para obtener insumos
+app.get('/insumos', (_, res) => {
+    res.header("Access-Control-Allow-Origin", "*");
+    const sql = 'SELECT id, nombre FROM inventario WHERE cantidad > 0';
+    conexion.query(sql, (err, result) => {
+        if (err) {
+            console.error('Error al obtener los insumos:', err);
+            return res.status(500).send('Error al obtener los insumos');
+        }
+        if (result.length === 0) {
+            return res.status(404).send('No se encontraron insumos disponibles');
+        }
+        res.json(result);
+    });
+});
+    // fin api para obtener insumos
 // fin api para fechas inventario
 //api paraobtener datos de inventario
 app.get('/obtenerInventario', (req, res) => {
