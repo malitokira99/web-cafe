@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio de Sesión</title>
+    <link rel="icon" href="/views/ramita.png" type="image/x-icon">
+    <link rel="stylesheet" href="/views/estilolote.css">
+</head>
+<body>
+    <img src="/views/main-logo.png" alt="logo GC" style="display: block; margin: 0 auto; width: 20%; height: 20%; object-fit: cover; z-index: -1;">
+    <h1 id="titulo" style="margin-top: 1%;">Inicio de Sesión</h1>
+    <form action="/login" method="post" style="width: 50%; " id="accesof">
+        <label for="usuario">Usuario:</label><br>
+        <input type="text" id="usuario" name="usuario" required><br><br>
+
+        <label for="contraseña">Contraseña:</label><br>
+        <input type="password" id="contraseña" name="contraseña" required><br>
+                    <a href="registro.html" style="color:violet ; text-align: center;">Registrarse</a>
+                    <br>
+        <button type="submit">Iniciar Sesión</button>
+    </form>
+</body>
+<style>
+    #accesof {
+        display: flex;
+        justify-content: center;
+        position: center;
+        
+        flex-direction: column;
+        padding: 20px;
+        margin-top: 2%;
+        width: 300px; /* Reduce el ancho del formulario */
+        border: 1px solid #ccc; /* Opcional: agrega un borde para delimitar */
+        border-radius: 10px; /* Opcional: bordes redondeados */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Opcional: sombra para destacar */
+    }
+    #mes-form {
+        text-align: center;
+    }
+</style>
+</html>

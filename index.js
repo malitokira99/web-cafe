@@ -334,24 +334,22 @@ app.get("/actividades", function(req, res){
 app.post("/actividades", function(req, res) {
     res.header("Access-Control-Allow-Origin", "*");
     const datos = req.body;
-    console.log(datos);
+    console.log(datos); // Verificar datos recibidos del formulario
     
-    let nombre_actividadt = datos.nombre_actividad;
-    let nombre_realizadort = datos.nombre_realizador;
-    let insumo_utilizadot = datos.insumo_utilizado;
-    let jornalest = datos.jornales;
-    let fecha_realizaciont = datos.fecha_realizacion;
-    let costo_totalt = datos.costo_total;
-    let observacionest= datos.observaciones;
-    let registrar  = "INSERT INTO actividades (nombre_actividad, nombre_realizador, jornales, insumo_utilizado,  fecha_realizacion, costo_total,observaciones) VALUES ('"+ nombre_actividadt +"','"+ nombre_realizadort+"','"+ jornalest +"','"+ insumo_utilizadot +"' ,'"+ fecha_realizaciont+"', '"+ costo_totalt+"', '"+observacionest +"' )";
+    let insumo_utilizadot = datos.insumo; // Asegúrate de usar el nombre correcto del campo
+    let registrar = `
+        INSERT INTO actividades (nombre_actividad, nombre_realizador, jornales, insumo_utilizado, fecha_realizacion, costo_total, observaciones) 
+        VALUES ('${datos.nombre_actividad}', '${datos.nombre_realizador}', '${datos.jornales}', '${insumo_utilizadot}', '${datos.fecha_realizacion}', '${datos.costo_total}', '${datos.observaciones}')
+    `;
 
-    conexion.query(registrar,function(error){
-if(error){
-    throw error;
-}else{
-    console.log("datos almacenados corectamente");
-    res.redirect("/actividades");
-}
+    conexion.query(registrar, function(error) {
+        if (error) {
+            console.error(error);
+            res.status(500).send("Error al almacenar los datos.");
+        } else {
+            console.log("Datos almacenados correctamente.");
+            res.redirect("/actividades");
+        }
     });
 });
 

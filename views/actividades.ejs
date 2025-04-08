@@ -6,6 +6,7 @@
     <title>actividades</title>
     <script src="code.js"></script>
     <link rel="stylesheet" href="estilolote.css">
+    <link rel="icon" href="ramita.png" type="image/x-icon">
 </head>
 <body>
     <header>
@@ -32,7 +33,7 @@
             <label for="jornales">jornales</label>
             <input type="number" id="jornales" name="jornales" placeholder="ingrese el numero de jornales "><br>
             <label for="nombre">insumo utilizado</label>
-            <select name="insumo" id="insumo_utilizado tipo_cultivo" class="desplegable">
+            <select name="insumo" id="insumo_utilizado_tipo_cultivo" class="desplegable">
                 <option value="" disabled selected>Selecciona un tipo de insumo</option>
                 <option value="">cargando insumos</option>                
              </select><br><br>
@@ -228,26 +229,35 @@
     }
 
     document.addEventListener('DOMContentLoaded', async () => {
-        const insumoSelect = document.getElementById('insumo_utilizado tipo_cultivo');
+    const insumoSelect = document.getElementById('insumo_utilizado_tipo_cultivo');
 
-        try {
-            // Fetch insumos desde el backend
-            const response = await fetch('http://localhost:4000/insumos');
-            const insumos = await response.json();
+    try {
+        const response = await fetch('http://localhost:4000/insumos');
+        if (!response.ok) throw new Error('Error al cargar los insumos');
+        const insumos = await response.json();
 
-            // Vacía el desplegable y llena con datos obtenidos
-            insumoSelect.innerHTML = '<option value="">Selecciona un insumo</option>';
-            insumos.forEach(insumo => {
-                const option = document.createElement('option');
-                option.value = insumo.id; // ID del insumo
-                option.textContent = insumo.nombre; // Nombre del insumo
-                insumoSelect.appendChild(option);
-            });
-        } catch (error) {
-            console.error('Error cargando insumos:', error);
-            insumoSelect.innerHTML = '<option value="">Error cargando insumos</option>';
-        }
-    });
+        // Vaciar y llenar el desplegable
+        insumoSelect.innerHTML = '<option value="" disabled selected>Selecciona un tipo de insumo</option>';
+        insumos.forEach(insumo => {
+            const option = document.createElement('option');
+            option.value = insumo.nombre; // Usar el nombre del insumo como value
+            option.textContent = insumo.nombre; // Mostrar el nombre del insumo
+            insumoSelect.appendChild(option);
+        });
+    } catch (error) {
+        console.error('Error cargando insumos:', error);
+        insumoSelect.innerHTML = '<option value="">Error cargando insumos</option>';
+    }
+});
+
+document.querySelector('form').addEventListener('submit', function(event) {
+    const insumo = document.getElementById('insumo_utilizado_tipo_cultivo').value;
+    if (!insumo) {
+        event.preventDefault();
+        alert('Por favor selecciona un insumo.');
+    }
+});
+
 </script>
     
 </body>

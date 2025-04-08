@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Registro</title>
+    <link rel="stylesheet" href="/views/estilolote.css">
+    <link rel="icon" href="/views/ramita.png" type="image/x-icon">
+</head>
+<body>
+    <h1 id="titulo">Registro de Finca</h1>
+    <form action="/submit" method="post" style="width: 50%;">
+        <label for="usuario">Usuario:</label><br>
+        <input type="text" id="usuario" name="usuario" required><br>
+
+        <label for="contraseña">Contraseña:</label><br>
+        <input type="password" id="contraseña" name="contraseña" minlength="8" required><br>
+
+        <label for="nombreFinca">Nombre de la Finca:</label><br>
+        <input type="text" id="nombreFinca" name="nombreFinca" required><br>
+
+        <label for="area">Área (m²):</label><br>
+        <input type="number" id="area" name="area" required><br>
+
+        <label for="altura">Altura (msnm):</label><br>
+        <input type="number" id="altura" name="altura" required><br>
+
+        <label for="departamento">Departamento:</label><br>
+        <input type="text" id="departamento" name="departamento" required><br>
+
+        <label for="municipio">Municipio:</label><br>
+        <input type="text" id="municipio" name="municipio" required><br>
+        <button type="submit">Registrar</button>
+    </form>
+</body>
+</html>
