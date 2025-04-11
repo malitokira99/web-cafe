@@ -5,7 +5,7 @@ const mysql = require("mysql");
 
 let conexion =mysql.createConnection({
     host: "localhost",
-    database: "finca_cafetera",
+    database: "gestion_cafetera",
     user: "root",
     
 })
@@ -415,7 +415,48 @@ app.get('/actividadesa', (req, res) => {
       res.json(result);
     });
   });
+// Endpoint para manejar la solicitud del formulario
+app.post('/submit', (req, res) => {
+    res.header("Access-Control-Allow-Origin", "*");
+    const { usuario, contraseña, nombreFinca, area, altura, departamento, municipio } = req.body;
 
+    // Validaciones básicas
+    if (!usuario || !contraseña || !nombreFinca || !area || !altura || !departamento || !municipio) {
+        return res.status(400).send('Todos los campos son obligatorios');
+    }
+
+    if (contraseña.length < 8) {
+        return res.status(400).send('La contraseña debe tener al menos 8 caracteres');
+    }
+
+    // Lógica para almacenar los datos en la base de datos
+    const query = `
+        INSERT INTO usuarios (nombre_usuario, contraseña, nombre_finca, area_finca, altura, departamento, municipio)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    `;
+    const params = [usuario, contraseña, nombreFinca, area, altura, departamento, municipio];
+
+    conexion.query(query, params, (err) => {
+        if (err) {
+            console.error('Error al guardar los datos:', err);
+            return res.status(500).send('Error al guardar los datos');
+        }
+        res.status(200).send('¡Registro exitoso!');
+    });
+});
+// Endpoint para obtener los datos de la finca
+app.get('/getFinca/:id', (req, res) => {
+    res.header("Access-Control-Allow-Origin", "*");
+    const id = req.params.id;
+    const query = `SELECT nombre_finca, area_finca, altura, departamento, municipio FROM usuarios WHERE id = ?`;
+
+    conexion.query(query, [id], (err, result) => {
+        if (err) return res.status(500).send(err.message);
+        if (result.length === 0) return res.status(404).send('Finca no encontrada.');
+
+        res.json(result[0]);
+    });
+});
 
 app.listen(4000, function() {
     console.log("Servidor corriendo en http://localhost:4000");

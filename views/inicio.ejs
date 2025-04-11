@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=0.99">
     <title>gestion cafetera</title>
     <link rel="stylesheet" href="estilos.css">
+    
     <script src="code.js"></script>
     <script src="inicio.js" defer></script>
     <style>
@@ -24,19 +25,16 @@
             </ul>
         </nav>
     </header>
-    <section id="info_finca" >
-        <div style=" width:60%;">
-        <h1 style="color: antiquewhite;">Finca La Isla</h1>
-        <h3>area: 20,000m2</h3>
-        <h3>altura msnm: 1,430</h3>
-        <h3>departamento: Tolima</h3>
-        <h3>municipio: Líbano</h3>
-        <button id="bdetalles" style="width: max-content; padding: 5px;">Detalles</button>
-    </div>
+    <section id="info_finca"display ="grid"> 
+       <div style="display: block;"><div id="data_fin"></div>
+       <button id="bdetalles" style="width: max-content; padding: 5px; ">Detalles</button>
+    </div> 
+        
+     
             <div id="weather">
                 <h1>Clima Actual en el Líbano Tólima</h1>
             </div>
-        
+           
     </section>
     <section id="finta">
         <div id="accesof">
@@ -145,19 +143,185 @@
                 document.getElementById('meses').value = mesActual;
                 actualizarGrafico(mesActual);
             });
+            document.addEventListener('DOMContentLoaded', () => {
+    const fincaSection = document.getElementById('info_finca');
+    const fincaId = 1; // Cambia este ID por el que necesites
+
+    fetch(`http://localhost:4000/getFinca/${fincaId}`)
+        .then(response => {
+            if (!response.ok) throw new Error('Error al obtener los datos de la finca.');
+            return response.json();
+        })
+        .then(data => {
+            data_fin.innerHTML = `
+                <div style="width:100%;">
+                    <h1 style="color: antiquewhite;">Finca ${data.nombre_finca}</h1>
+                    <h3>Área: ${data.area_finca}m²</h3>
+                    <h3>Altura (msnm): ${data.altura}</h3>
+                    <h3>Departamento: ${data.departamento}</h3>
+                    <h3>Municipio: ${data.municipio}</h3>
+                    
+                </div>
+            `;
+        })
+        .catch(error => {
+            console.error(error);
+            data_fin.innerHTML = `<p>Error al cargar la información de la finca.</p>`;
+        });
+});
+
         </script>
         </section>
     </section>
     <div id="detalles_inicio">
         <span class="cerrar" id="cerrarBtn">&times;</span>
        <div class="datos_finca_inicio">
-           <h1>nombre de la finca</h1>
-           <h1>area metros cuadrados</h1>
-           <h1>departamento</h1>
-           <h1>altura msnm</h1>
-           <h1>municipio</h1>
-         <h1>aqui estara datos especificos</h1>
+        <header>
+            <h1>Informe de Gestión Cafetera</h1>
+            
+        </header>
+        <main>
+            <section>
+                <h2>Informe de Ingresos y Gastos</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Descripción</th>
+                            <th>Monto (COP)</th>
+                            <th>Tipo</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ingresos-gastos">
+                        <!-- Datos dinámicos -->
+                    </tbody>
+                </table>
+            </section>
+    
+            <section>
+                <h2>Producción de Café por Mes</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Mes</th>
+                            <th>Kilos Producidos</th>
+                        </tr>
+                    </thead>
+                    <tbody id="produccion-cafe">
+                        <!-- Datos dinámicos -->
+                    </tbody>
+                </table>
+            </section>
+    
+            <section>
+                <h2>Cultivos por Lotes</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Lote</th>
+                            <th>Área (m<sup>2</sup>)</th>
+                            <th>Tiempo de Cultivo</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cultivo-lotes">
+                        <!-- Datos dinámicos -->
+                    </tbody>
+                </table>
+            </section>
+        </main>
+        <footer>
+            <p>Informe generado automáticamente. Fecha: <span id="fecha"></span></p>
+            <button onclick="imprimirDatosFinca()">Imprimir</button>
+        </footer>
        </div>
+       <script>
+        //codigo para informe
+// script.js
+document.getElementById("fecha").textContent = new Date().toLocaleDateString();
+
+// Ejemplo de datos dinámicos
+const ingresosGastos = [
+    { descripcion: "Venta de café", monto: 500000, tipo: "Ingreso" },
+    { descripcion: "Fertilizantes", monto: -200000, tipo: "Gasto" }
+];
+
+const produccionCafe = [
+    { mes: "Enero", kilos: 1200 },
+    { mes: "Febrero", kilos: 1400 }
+];
+
+const cultivoLotes = [
+    { lote: "Lote A", area: 5000, tiempo: "6 meses" },
+    { lote: "Lote B", area: 7000, tiempo: "12 meses" }
+];
+
+// Renderizar datos dinámicos
+function renderTabla(id, datos, columnas) {
+    const tbody = document.getElementById(id);
+    tbody.innerHTML = datos.map(d => `<tr>${columnas.map(c => `<td>${d[c]}</td>`).join('')}</tr>`).join('');
+}
+
+renderTabla("ingresos-gastos", ingresosGastos, ["descripcion", "monto", "tipo"]);
+renderTabla("produccion-cafe", produccionCafe, ["mes", "kilos"]);
+renderTabla("cultivo-lotes", cultivoLotes, ["lote", "area", "tiempo"]);
+
+// Función para imprimir
+function imprimirPagina() {
+    window.print();
+}
+
+// script.js
+function mostrarSeccion(seccionId) {
+    const secciones = document.querySelectorAll("main section");
+    secciones.forEach(sec => sec.classList.add("oculto"));
+    document.getElementById(seccionId).classList.remove("oculto");
+}
+
+// Ejemplo dinámico para agregar ingresos
+document.querySelector("form").addEventListener("submit", function(event) {
+    event.preventDefault();
+    const descripcion = event.target[0].value;
+    const monto = event.target[1].value;
+    const tipo = event.target[2].value;
+
+    const fila = `
+        <tr>
+            <td>${descripcion}</td>
+            <td>${monto}</td>
+            <td>${tipo}</td>
+        </tr>
+    `;
+    document.getElementById("ingresos-tabla").innerHTML += fila;
+
+    // Limpia el formulario
+    event.target.reset();
+});
+
+function imprimirDatosFinca() {
+    const contenido = document.querySelector('.datos_finca_inicio').innerHTML;
+    const originalContenido = document.body.innerHTML;
+
+    document.body.innerHTML = `
+        <html>
+        <head>
+            <title>Informe de Gestión Cafetera</title>
+            <style>
+                body { font-family: Arial, sans-serif; margin: 20px; }
+                table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+                th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                th { background-color: #f2f2f2; }
+            </style>
+        </head>
+        <body>
+            ${contenido}
+        </body>
+        </html>
+    `;
+
+    window.print();
+    document.body.innerHTML = originalContenido;
+    location.reload();
+}
+       </script>
     </div>
     <script>
         document.getElementById("bdetalles").addEventListener('click', function() {
