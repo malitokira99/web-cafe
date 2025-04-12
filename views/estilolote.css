@@ -128,8 +128,18 @@
         text-decoration: none;
     
     }
-    
-    @media (max-width: 600px){
+    .iconrama {
+        display: block;
+        margin: 0 auto;
+        width: 20%;
+        height: 20%;
+        object-fit: cover;
+        z-index: -1;
+        position: relative;
+        left: 50%;
+        transform: translateX(-50%);
+    }   
+    @media (max-width: 630px){
         nav{
             background-color: #251d1d;
             flex-direction: column;
@@ -148,7 +158,15 @@
         body{
             padding: 0.5%;
         }
-       
+        fom{
+            width: 90%;
+            height: 100%;
+            margin: auto;
+        }
+       .iconrama{
+        width: 150px;
+        height: 150px;
+       }
     }
     /*cuadro de dialogo  informacion finca*/
 #detalles_inicio {

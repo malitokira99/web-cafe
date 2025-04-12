@@ -9,7 +9,7 @@
 </head>
 <body>
     <h1 id="titulo">Registro de Finca</h1>
-    <form action="http://localhost:4000/submit" method="post" style="width: 50%;">
+    <form id="registroForm" action="http://localhost:4000/submit">
         <label for="usuario">Usuario:</label><br>
         <input type="text" id="usuario" name="usuario" required><br>
 
@@ -34,5 +34,31 @@
         <br>
         <a href="login.html" style="text-align: center;">ir a login</a>
     </form>
+
+    <script>
+        document.getElementById('registroForm').addEventListener('submit', async function(event) {
+            event.preventDefault(); // Evita el envío predeterminado del formulario
+
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData.entries());
+
+            try {
+                const response = await fetch('http://localhost:4000/submit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    alert('¡Registro exitoso!');
+                    window.location.href = 'login.html';
+                } else {
+                    alert('Error en el registro. Por favor, inténtalo de nuevo.');
+                }
+            } catch (error) {
+                alert('Ocurrió un error al conectar con el servidor.');
+            }
+        });
+    </script>
 </body>
 </html>
