@@ -2,14 +2,27 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=0.99">
-    <title>gestion cafetera</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión Cafetera</title>
     <link rel="stylesheet" href="estilos.css">
-     <link rel="icon" href="ramita.png" type="image/x-icon">
     <script src="code.js"></script>
-    <script src="inicio.js" defer></script>
+    <link rel="icon" href="ramita.png" type="image/x-icon">
     <style>
-       
+        /* Estilos para impresión */
+        @media print {
+            body * {
+                visibility: hidden; /* Oculta todo el contenido */
+            }
+            #detalles_inicio, #detalles_inicio * {
+                visibility: visible; /* Muestra solo el informe */
+            }
+            #detalles_inicio {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+            }
+        }
     </style>
 </head>
 <body>
@@ -324,6 +337,13 @@ function imprimirDatosFinca() {
        </script>
     </div>
     <script>
+        // Asegúrate de que el contenido dinámico esté listo antes de imprimir
+        function imprimirDatosFinca() {
+            const detalles = document.getElementById('detalles_inicio');
+            detalles.style.display = 'block'; // Asegúrate de que los detalles estén visibles
+            window.print();
+        }
+
         document.getElementById("bdetalles").addEventListener('click', function() {
             document.getElementById('detalles_inicio').style.display = 'block';
         });
