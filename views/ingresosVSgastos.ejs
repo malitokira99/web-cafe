@@ -24,31 +24,29 @@
    </header>
     <div class="formulario">
         <form action="/ingresosVSgastos" method="post">
-            <!-- Aquí van los campos del formulario -->
-             
             <label for="tipo">Tipo</label>
-            <select name="tipo" class="desplegable" id="tipo">
+            <select name="tipo" class="desplegable" id="tipo" required>
                 <option value="" disabled selected>elige un tipo</option>
                 <option value="ingresos">ingreso</option>
                 <option value="gastos">gasto</option>
              </select><br>
              <label for="concepto">porque concepto</label>
-             <select name="concepto" class="desplegable" id="concepto">
+             <select name="concepto" class="desplegable" id="concepto" required>
                 <option value="" disabled selected>Selecciona un concepto</option>
                 <option value="venta de cafe">venta de cafe</option>
-                <option value="venta de platano"> venta de  platano</option>
+                <option value="venta de platano">venta de platano</option>
                 <option value="otro concepto">otro concepto</option>
              </select><br><br>
             <label for="cunto">cantidad</label>
-            <input type="number" id="cantidad_producto" name="cantidad_producto"><br>
+            <input type="number" id="cantidad_producto" name="cantidad_producto" required><br>
             <label for="valor">monto en pesos COP</label>
-            <input type="number" id="cantidad_pesos" name="cantidad_pesos"><br>
+            <input type="number" id="cantidad_pesos" name="cantidad_pesos" required><br>
              
             <label for="fecaha">fecha</label>
-            <input type="date" id="fecha_registro" name="fecha_registro"><br>
+            <input type="date" id="fecha_registro" name="fecha_registro" required><br>
              <label>periodo</label>
             <div style="display: flex; width: 100%;">
-                <select name="semana" id="semana" class="desplegable" style="width: 50%; margin: 3px;">
+                <select name="semana" id="semana" class="desplegable" style="width: 50%; margin: 3px;" required>
                     <option value="" disabled selected>Semana</option>
                     <option value="1">1</option>
                     <option value="2">2</option>
@@ -56,7 +54,7 @@
                     <option value="4">4</option>
                  </select>
                  <!--mes-->
-                 <select name="mes" id="mes" class="desplegable" style="width: 50%; margin: 3px;">
+                 <select name="mes" id="mes" class="desplegable" style="width: 50%; margin: 3px;" required>
                     <option value="" disabled selected>mes</option>
                     <option value="enero">enero</option>
                     <option value="febrero">febrero</option>
@@ -73,7 +71,7 @@
                  </select>
             </div> <br> <br>
             <label for="observa">Observaciones</label>
-            <textarea name="observaciones" id="observaciones"></textarea><br>
+            <textarea name="observaciones" id="observaciones" required></textarea><br>
             <input type="submit" value="Guardar" id="btlote">
             <br>
         </form>

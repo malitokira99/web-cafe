@@ -34,13 +34,13 @@
                 <option value="equipo">equipo</option>
              </select><br><br>
             <label for="nombre">nombre</label>
-            <input type="text" id="nombre" name="nombre" placeholder="nombre de la herramienta"><br>
+            <input type="text" id="nombre" name="nombre" placeholder="nombre de la herramienta" required><br>
             <label for="codigo">codigo</label>
-            <input type="int" id="codigo_asignado" name="codigo_asignado"><br>
+            <input type="int" id="codigo_asignado" name="codigo_asignado" required><br>
             <label for="fcompra">fecha de compra</label>
-            <input type="date" id="fecha_compra" name="fecha_compra"><br>
+            <input type="date" id="fecha_compra" name="fecha_compra" required><br>
             <label for="fcompra"> donde esta? </label>
-             <select name="ubicacion" id="ubicacion" class="desplegable">
+             <select name="ubicacion" id="ubicacion" class="desplegable" required>
                 <option value="" disabled selected>Selecciona una opción</option>
                 <option value="almacen">almacen</option>
                 <option value="terreno">en terreno</option>
@@ -49,9 +49,9 @@
                 <option value="descompuesta"> dañada</option>
              </select><br><br>
             <label for="cuanto">cantidad</label>
-            <input type="number" id="cantidad" name="cantidad"><br>
+            <input type="number" id="cantidad" name="cantidad" required><br>
             <label for="observa">Observaciones</label>
-            <textarea name="observaciones" id="observaciones"></textarea><br>
+            <textarea name="observaciones" id="observaciones" required></textarea><br>
             <input type="submit" value="Guardar" id="btlote">
             <br>
         </form>
