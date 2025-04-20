@@ -25,17 +25,76 @@
         <label for="altura">Altura (msnm):</label><br>
         <input type="number" id="altura" name="altura" required><br>
 
-        <label for="departamento">Departamento:</label><br>
-        <input type="text" id="departamento" name="departamento" required><br>
+        <label for="departamento" >Departamento:</label><br>
+        <select id="departamento" name="departamento" class="desplegable" required>
+            <option value="">Selecciona un departamento</option>
+        </select><br>
 
         <label for="municipio">Municipio:</label><br>
-        <input type="text" id="municipio" name="municipio" required><br>
+        <select id="municipio" name="municipio" class="desplegable" required disabled>
+            <option value="">Selecciona un municipio</option>
+        </select><br>
+
         <button type="submit">Registrar</button>
         <br>
         <a href="login.html" style="text-align: center;">ir a login</a>
     </form>
 
     <script>
+        // Función para cargar y procesar el archivo CSV
+        async function cargarCSV() {
+            try {
+                // Ruta del archivo CSV
+                const response = await fetch('depar.csv');
+                const csvData = await response.text();
+
+                // Procesar el CSV
+                const departamentos = {};
+                const lines = csvData.split('\n').slice(1); // Omitir la cabecera
+
+                lines.forEach(line => {
+                    const [region, codigoDepartamento, departamento, codigoMunicipio, municipio] = line.split(',');
+                    if (!departamentos[departamento]) {
+                        departamentos[departamento] = [];
+                    }
+                    departamentos[departamento].push(municipio);
+                });
+
+                // Rellenar el selector de departamentos
+                const departamentoSelect = document.getElementById("departamento");
+                departamentoSelect.innerHTML = '<option value="">Selecciona un departamento</option>';
+                for (const depto of Object.keys(departamentos)) {
+                    const option = document.createElement("option");
+                    option.value = depto;
+                    option.textContent = depto;
+                    departamentoSelect.appendChild(option);
+                }
+
+                // Actualizar municipios según el departamento seleccionado
+                departamentoSelect.addEventListener("change", function () {
+                    const municipioSelect = document.getElementById("municipio");
+                    municipioSelect.innerHTML = '<option value="">Selecciona un municipio</option>';
+                    municipioSelect.disabled = false;
+
+                    const deptoSeleccionado = this.value;
+                    if (departamentos[deptoSeleccionado]) {
+                        departamentos[deptoSeleccionado].forEach(municipio => {
+                            const option = document.createElement("option");
+                            option.value = municipio;
+                            option.textContent = municipio;
+                            municipioSelect.appendChild(option);
+                        });
+                    }
+                });
+            } catch (error) {
+                console.error("Error al cargar el archivo CSV:", error);
+            }
+        }
+
+        // Llamar a la función para cargar el CSV al cargar la página
+        cargarCSV();
+
+        // Manejo del envío del formulario
         document.getElementById('registroForm').addEventListener('submit', async function(event) {
             event.preventDefault(); // Evita el envío predeterminado del formulario
 
