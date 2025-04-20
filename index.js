@@ -2,6 +2,7 @@ const express = require("express");
 const path = require("path");
 const app = express();
 const mysql = require("mysql");
+const session = require('express-session');
 
 let conexion =mysql.createConnection({
     host: "localhost",
@@ -14,18 +15,101 @@ app.set("view engine", "ejs");
 app.use(express.json());
 app.use(express.urlencoded({extended:false}));
 
+// Configurar middleware de sesión
+app.use(session({
+    secret: 'clave-secreta', // Cambia esto por una clave segura
+    resave: false,
+    saveUninitialized: true,
+    store: new (require('express-mysql-session')(session))({
+        host: 'localhost',
+        port: 3306,
+        user: 'root',
+        // Cambia esto por la contraseña de tu base de datos
+        database: 'gestion_cafetera'
+    })
+}));
 
 // Servir archivos estáticos desde la carpeta "vistas"
 app.use(express.static(path.join(__dirname, 'views')));
 
 // apis para inicio 
-app.get('/', function (req, res) {
-  
-        res.render('inicio');
+app.post('/login', (req, res) => {
+    const { usuario, contraseña } = req.body;
+
+    const query = 'SELECT id, nombre_finca FROM usuarios WHERE nombre_usuario = ? AND contraseña = ?';
+    conexion.query(query, [usuario, contraseña], (err, results) => {
+        if (err) {
+            console.error('Error al autenticar:', err);
+            return res.status(500).send('Error en el servidor');
+        }
+
+        if (results.length > 0) {
+            // Guardar el ID del usuario en la sesión
+            req.session.userId = results[0].id;
+            req.session.fincaNombre = results[0].nombre_finca;
+            res.redirect('/');
+        } else {
+            // Mostrar un alert y recargar la página
+            res.send(`
+                <script>
+                    alert('Usuario o contraseña incorrectos. Por favor, inténtalo de nuevo.');
+                    window.location.href = '/login';
+                </script>
+            `);
+        }
     });
+});
+
+app.get('/login', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views', 'login.html'));
+});
+
+app.get('/logout', (req, res) => {
+    req.session.destroy(err => {
+        if (err) {
+            console.error('Error al cerrar sesión:', err);
+            return res.status(500).send('Error al cerrar sesión');
+        }
+        res.redirect('/login'); // Redirigir al login después de cerrar sesión
+    });
+});
+
+app.get('/registro', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views', 'registro.html'));
+});
+
+// Middleware para verificar si el usuario está autenticado
+function verificarAutenticacion(req, res, next) {
+    if (req.session && req.session.userId) {
+        next(); // El usuario está autenticado, continuar con la solicitud
+    } else {
+        res.send('<script>alert("No estás autenticado. Por favor, inicia sesión."); window.location.href = "/login";</script>');
+    }
+}
+
+// Usar el middleware en las rutas protegidas
+app.get('/', verificarAutenticacion, (req, res) => {
+    res.render('inicio', { userId: req.session.userId });
+});
+
+app.get('/lotes', verificarAutenticacion, (req, res) => {
+    res.render('lotes');
+});
+
+app.get('/inventario', verificarAutenticacion, (req, res) => {
+    res.render('inventario');
+});
+
+app.get('/ingresosVSgastos', verificarAutenticacion, (req, res) => {
+    res.render('ingresosVSgastos');
+});
+
+app.get('/actividades', verificarAutenticacion, (req, res) => {
+    res.render('actividades');
+});
     
-    app.get('/finanzas', (req, res) => {
-        res.header("Access-Control-Allow-Origin", "*");
+app.get('/finanzas', (req, res) => {
+    res.header("Access-Control-Allow-Origin", "*");
     const mes = req.params.mes;
     
     let query = 'SELECT * FROM datos_financieros ';
@@ -40,7 +124,7 @@ app.get('/', function (req, res) {
     });
 });
 
-app.get("/datos", (req, res) => {
+app.get("/datos", verificarAutenticacion, (req, res) => {
     const query = "SELECT * FROM datos_financieros";
     conexion.query(query, (err, results) => {
         if (err) {
@@ -122,8 +206,7 @@ app.put('/actualizar-lote/:id', (req, res) => {
     res.send('Lote actualizado exitosamente');
   });
 });
-app.get('/lotesa', (req, res) => {
-    res.header("Access-Control-Allow-Origin", "*");
+app.get('/lotesa', verificarAutenticacion, (req, res) => {
     const sql = 'SELECT * FROM lotes';
     conexion.query(sql, (err, result) => {
       if (err) {

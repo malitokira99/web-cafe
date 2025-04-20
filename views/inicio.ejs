@@ -28,13 +28,16 @@
 <body>
     <header>
         <nav style="display: grid;">
-            <h2 id="titulo" style="margin: 0;"></h2>
-            <button class="amburgesa" onclick="accion()"><h1 style="margin: 0; padding: 0; width: 100%; cursor: pointer;">☕</h1></button>
+           
+            <button class="amburgesa" onclick="accion()">
+                <h1 style="margin: 0; padding: 0; width: 100%; cursor: pointer;">☕</h1>
+            </button>
             <ul id="menu" style="margin-top: 0;">
-                <a href="/lotes" class="menu oculto">Lotes</a>
-                <a href="/actividades" class="menu oculto">actividades</a>
-                <a href="/inventario" class="menu oculto">inventario</a>
-                <a href="/ingresosVSgastos" class="menu oculto">ingresos y gastos</a>
+                <li><a href="/lotes">Lotes</a></li>
+                <li><a href="/actividades">Actividades</a></li>
+                <li><a href="/inventario">Inventario</a></li>
+                <li><a href="/ingresosVSgastos">Ingresos y Gastos</a></li>
+                <li><a href="/logout" style="color: red;">Cerrar Sesión</a></li> <!-- Enlace para cerrar sesión -->
             </ul>
         </nav>
     </header>
@@ -158,7 +161,7 @@
             });
             document.addEventListener('DOMContentLoaded', () => {
     const fincaSection = document.getElementById('info_finca');
-    const fincaId = 36; // Cambia este ID por el que necesites
+    const fincaId = "<%= userId %>"; // Usar el ID del usuario desde la sesión
 
     fetch(`http://localhost:4000/getFinca/${fincaId}`)
         .then(response => {
@@ -167,14 +170,13 @@
         })
         .then(data => {
             data_fin.innerHTML = `
-                <div style="width:100%;">
-                    <h1 style="color: antiquewhite;">Finca ${data.nombre_finca}</h1>
-                    <h3>Área: ${data.area_finca}m²</h3>
-                    <h3>Altura (msnm): ${data.altura}</h3>
-                    <h3>Departamento: ${data.departamento}</h3>
-                    <h3>Municipio: ${data.municipio}</h3>
-                    
-                </div>
+            <div style="width:100%;">
+                <h1 style="color: antiquewhite;">Finca ${data.nombre_finca}</h1>
+                <h3>Área: ${parseFloat(data.area_finca).toLocaleString()} m²</h3>
+                <h3>Altura (msnm): ${parseFloat(data.altura).toLocaleString()}</h3>
+                <h3>Departamento: ${data.departamento}</h3>
+                <h3>Municipio: ${data.municipio}</h3>
+            </div>
             `;
         })
         .catch(error => {
