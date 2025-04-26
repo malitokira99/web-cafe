@@ -512,19 +512,32 @@ app.post('/submit', (req, res) => {
         return res.status(400).send('La contraseña debe tener al menos 8 caracteres');
     }
 
-    // Lógica para almacenar los datos en la base de datos
-    const query = `
-        INSERT INTO usuarios (nombre_usuario, contraseña, nombre_finca, area_finca, altura, departamento, municipio)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
-    `;
-    const params = [usuario, contraseña, nombreFinca, area, altura, departamento, municipio];
-
-    conexion.query(query, params, (err) => {
+    // Verificar si el usuario ya existe
+    const verificarUsuarioQuery = 'SELECT id FROM usuarios WHERE nombre_usuario = ?';
+    conexion.query(verificarUsuarioQuery, [usuario], (err, results) => {
         if (err) {
-            console.error('Error al guardar los datos:', err);
-            return res.status(500).send('Error al guardar los datos');
+            console.error('Error al verificar el usuario:', err);
+            return res.status(500).send('Error en el servidor');
         }
-        res.status(200).send('¡Registro exitoso!');
+
+        if (results.length > 0) {
+            return res.status(400).send('El nombre de usuario ya está en uso. Por favor, elige otro.');
+        }
+
+        // Si no existe, insertar el nuevo usuario
+        const query = `
+            INSERT INTO usuarios (nombre_usuario, contraseña, nombre_finca, area_finca, altura, departamento, municipio)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        `;
+        const params = [usuario, contraseña, nombreFinca, area, altura, departamento, municipio];
+
+        conexion.query(query, params, (err) => {
+            if (err) {
+                console.error('Error al guardar los datos:', err);
+                return res.status(500).send('Error al guardar los datos');
+            }
+            res.status(200).send('¡Registro exitoso!');
+        });
     });
 });
 // Endpoint para obtener los datos de la finca

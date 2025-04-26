@@ -112,7 +112,8 @@
                     alert('¡Registro exitoso!');
                     window.location.href = 'login.html';
                 } else {
-                    alert('Error en el registro. Por favor, inténtalo de nuevo.');
+                    const errorMessage = await response.text();
+                    alert(errorMessage); // Mostrar el mensaje de error devuelto por el servidor
                 }
             } catch (error) {
                 alert('Ocurrió un error al conectar con el servidor.');
